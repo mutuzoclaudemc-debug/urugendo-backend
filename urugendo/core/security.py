@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+import time
 from typing import Optional
 
 import bcrypt
@@ -25,9 +25,9 @@ def verify_password(plain: str, hashed: str) -> bool:
 
 # ── Token helpers ──────────────────────────────────────────────────────────────
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+def create_access_token(data: dict, expires_delta: Optional[int] = None) -> str:
     to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
+    expire = int(time.time()) + (expires_delta or settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60)
     to_encode.update({"exp": expire})
     return pyjwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
