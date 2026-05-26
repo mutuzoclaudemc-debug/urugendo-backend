@@ -55,3 +55,19 @@ def root():
 @app.get("/health", tags=["Health"])
 def health():
     return {"status": "ok"}
+
+
+@app.get("/debug/token", tags=["Debug"])
+def debug_token(token: str):
+    import jwt as pyjwt, time
+    try:
+        payload = pyjwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        return {"status": "valid", "payload": payload, "jwt_version": pyjwt.__version__}
+    except Exception as e:
+        test_token = pyjwt.encode({"sub": 99, "exp": int(time.time()) + 3600}, settings.SECRET_KEY, algorithm="HS256")
+        try:
+            pyjwt.decode(test_token, settings.SECRET_KEY, algorithms=["HS256"])
+            self_sign_ok = True
+        except Exception:
+            self_sign_ok = False
+        return {"status": "error", "error": str(e), "type": type(e).__name__, "jwt_version": pyjwt.__version__, "self_sign_ok": self_sign_ok}
