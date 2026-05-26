@@ -11,10 +11,25 @@ from schemas import RideCreate, RideResponse
 router = APIRouter(prefix="/rides", tags=["Rides"])
 
 
+def _safe_driver(driver) -> dict:
+    return {
+        "id": driver.id,
+        "full_name": driver.full_name,
+        "phone": driver.phone,
+        "email": driver.email,
+        "is_verified": driver.is_verified,
+        "avatar_url": driver.avatar_url,
+        "bio": driver.bio,
+        "average_rating": driver.average_rating,
+        "total_trips": driver.total_trips,
+        "created_at": driver.created_at,
+    }
+
+
 def _build_response(ride: Ride) -> dict:
     return {
         "id": ride.id,
-        "driver": ride.driver,
+        "driver": _safe_driver(ride.driver),
         "origin_city": ride.origin_city,
         "destination_city": ride.destination_city,
         "origin_detail": ride.origin_detail,
